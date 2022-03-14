@@ -1,18 +1,61 @@
+import json
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
 from flask import Blueprint, request
 from flask.json import jsonify
 import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from database import PDF_Extracter, db
+from database import *
 
-pdf = Blueprint("pdf", __name__, url_prefix="/api/v1/pdf")
+views = Blueprint("views", __name__, url_prefix="/api/v1/views")
+
+@views.post('/user_create')
+def user_create():
+    if request.method == 'POST':
+        name = request.json['username']
+        mobile = request.json['mobile']
+        email = request.json['email']
+        id=request.json['id']
+        user = Users(username=name, mobile=mobile, email=email, user_id=id)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({
+            'message': "User created",
+            'user': {
+                'username': name, "email":email
+            }
+
+        }), HTTP_201_CREATED
 
 
-@pdf.route('/', methods=['POST', 'GET'])
+@views.post('/users') 
+def users():  
+    id=request.json['id']
+    list = []
+    users = Users.query.filter_by(user_id=id)
+    for i in users:
+        list.append({
+                'id': i.id,
+                'name': i.username,
+                'mobile': i.mobile,
+                'email': i.email,
+                'created_at': i.created_at,
+                'upated_at': i.updated_at,
+            })
+    return jsonify({"data":list}),HTTP_201_CREATED
+
+
+
+
+
+
+
+
+
+
+@views.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def handle_pdf():
-    current_user = get_jwt_identity()
-
+    current_user = get_jwt_identity() 
     if request.method == 'POST':
 
         body = request.get_json().get('body', '')

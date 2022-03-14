@@ -59,10 +59,11 @@ def register_goole():
                 'refresh': refresh,
                 'access': access,
                 'username': user.username,
-                'mobile': user.email
+                'mobile': user.email,
+                'id':user.id
             }
         }), HTTP_200_OK
-        
+
     user = User(username=name, role=role, email=email)
     db.session.add(user)
     db.session.commit()
@@ -94,7 +95,8 @@ def login():
                 'refresh': refresh,
                 'access': access,
                 'username': user.username,
-                'mobile': user.mobile
+                'mobile': user.mobile,
+                'id':user.id
             }
         }), HTTP_200_OK
 
@@ -119,13 +121,14 @@ def login_email():
                 'refresh': refresh,
                 'access': access,
                 'username': user.username,
-                'email': user.email
+                'email': user.email,
+                'id':user.id
             }
         }), HTTP_200_OK
 
     return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
 
-@auth.get("/users")
+@auth.get("/us")
 @jwt_required()
 def users():
     user_id = get_jwt_identity()

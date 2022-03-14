@@ -3,23 +3,23 @@ from constants.http_statscode import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVE
 from flask import Flask, config, redirect
 import os
 from api import auth
-#from src.views import views
-#from app.views import veiw
 from database import db
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger, swag_from
 from config.swagger import template, swagger_config
-from views import pdf
+from views import views
+from flask_migrate import Migrate
 
 
 def create_app(test_config=None):
 
     app = Flask(__name__, instance_relative_config=True)
+    migrate = Migrate(app, db)
 
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY="SECRET_key",
-            SQLALCHEMY_DATABASE_URI= "sqlite:///extracts.db",
+            SQLALCHEMY_DATABASE_URI= "sqlite:///blog.db",
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             JWT_SECRET_KEY="This_is_a_key"
 
@@ -33,7 +33,7 @@ def create_app(test_config=None):
 
     JWTManager(app)
     app.register_blueprint(auth)
-    app.register_blueprint(pdf)
+    app.register_blueprint(views)
 
     #Swagger(app, config=swagger_config, template=template)
 
