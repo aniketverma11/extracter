@@ -47,6 +47,22 @@ def register_goole():
     email = request.json['email']
     name = request.json['username']
     role = request.json['role']
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        
+        refresh = create_refresh_token(identity=user.id)
+        access = create_access_token(identity=user.id)
+
+        return jsonify({
+            'user': {
+                'refresh': refresh,
+                'access': access,
+                'username': user.username,
+                'mobile': user.email
+            }
+        }), HTTP_200_OK
+        
     user = User(username=name, role=role, email=email)
     db.session.add(user)
     db.session.commit()

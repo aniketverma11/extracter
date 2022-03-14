@@ -9,6 +9,7 @@ from database import db
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger, swag_from
 from config.swagger import template, swagger_config
+from views import pdf
 
 
 def create_app(test_config=None):
@@ -32,7 +33,7 @@ def create_app(test_config=None):
 
     JWTManager(app)
     app.register_blueprint(auth)
-    #app.register_blueprint(views)
+    app.register_blueprint(pdf)
 
     #Swagger(app, config=swagger_config, template=template)
 
