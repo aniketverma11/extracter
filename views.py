@@ -41,7 +41,7 @@ def users():
                 'created_at': i.created_at,
                 'upated_at': i.updated_at,
             })
-    return jsonify({"data":list}),HTTP_201_CREATED
+    return jsonify({"data":list}),HTTP_200_OK
 
 
 
