@@ -40,6 +40,7 @@ class Users(db.Model):
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    img_link = db.Column(db.String(500), nullable=True)
     reading_time=db.Column(db.String(10), nullable=True)
     cateory=db.Column(db.String(80), nullable=True)
     description = db.Column(db.String(350), nullable=True)

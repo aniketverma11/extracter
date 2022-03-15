@@ -50,11 +50,12 @@ def users():
 def blogs():
     if request.method == 'POST':
         time = request.json["reading_time"]
+        img_link=request.json["im_link"]
         category = request.json["category"]
         description = request.json["description"]
         drname = request.json["dr_name"]
         mobile = request.json["id"]
-        blog = Posts(user_id = mobile, reading_time=time, cateory=category, description=description, dr_name=drname)
+        blog = Posts(user_id = mobile, reading_time=time, cateory=category, description=description, dr_name=drname, img_link=img_link)
         db.session.add(blog)
         db.session.commit()
         return jsonify({
