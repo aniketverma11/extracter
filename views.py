@@ -75,6 +75,7 @@ def all_post():
             "id":i.id,
             "drname":i.dr_name,
             "description":i.description,
+            "img":i.img_link
             'created_at': i.created_at,
             'upated_at': i.updated_at
         })
