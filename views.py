@@ -9,7 +9,7 @@ from database import *
 
 views = Blueprint("views", __name__, url_prefix="/api/v1/views")
 
-@views.route('/user_create')
+@views.post('/user_create')
 def user_create():
     if request.method == 'POST':
         name = request.json['username']
