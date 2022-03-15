@@ -9,7 +9,7 @@ from database import *
 
 views = Blueprint("views", __name__, url_prefix="/api/v1/views")
 
-@views.post('/user_create')
+@views.route('/user_create')
 def user_create():
     if request.method == 'POST':
         name = request.json['username']
@@ -47,16 +47,14 @@ def users():
 
 
 @views.post("/user_blog_create")
-@jwt_required
 def blogs():
-    current_user = get_jwt_identity()
     if request.method == 'POST':
         time = request.json["reading_time"]
         category = request.json["category"]
         description = request.json["description"]
         drname = request.json["dr_name"]
-        id = request.json["id"]
-        blog = Posts(user_id = current_user, reading_time=time, cateory=category, description=description, dr_name=drname)
+        mobile = request.json["id"]
+        blog = Posts(user_id = mobile, reading_time=time, cateory=category, description=description, dr_name=drname)
         db.session.add(blog)
         db.session.commit()
         return jsonify({
@@ -68,13 +66,14 @@ def blogs():
 
 @views.get("/all_posts")
 def all_post():
-    id = request.json("id")
+    id = request.args.get("id")
     posts = Posts.query.filter_by(user_id=id)
     list = []
     for i in posts:
         list.append({
             "id":i.id,
             "drname":i.dr_name,
+            "description":i.description,
             'created_at': i.created_at,
             'upated_at': i.updated_at
         })
