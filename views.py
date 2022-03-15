@@ -1,4 +1,5 @@
 import json
+from unicodedata import category
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -35,6 +36,7 @@ def users():
     for i in users:
         list.append({
                 'id': i.id,
+                "foreign_key":i.user_id,
                 'name': i.username,
                 'mobile': i.mobile,
                 'email': i.email,
@@ -44,11 +46,39 @@ def users():
     return jsonify({"data":list}),HTTP_200_OK
 
 
+@views.post("/user_blog_create")
+@jwt_required
+def blogs():
+    current_user = get_jwt_identity()
+    if request.method == 'POST':
+        time = request.json["reading_time"]
+        category = request.json["category"]
+        description = request.json["description"]
+        drname = request.json["dr_name"]
+        id = request.json["id"]
+        blog = Posts(user_id = current_user, reading_time=time, cateory=category, description=description, dr_name=drname)
+        db.session.add(blog)
+        db.session.commit()
+        return jsonify({
+                'message': "User created",
+                'user': {
+                    'dr_name': drname, "catagory":category
+                }
+            }), HTTP_201_CREATED
 
-
-
-
-
+@views.get("/all_posts")
+def all_post():
+    id = request.json("id")
+    posts = Posts.query.filter_by(user_id=id)
+    list = []
+    for i in posts:
+        list.append({
+            "id":i.id,
+            "drname":i.dr_name,
+            'created_at': i.created_at,
+            'upated_at': i.updated_at
+        })
+    return jsonify({'data':list}),HTTP_200_OK
 
 
 

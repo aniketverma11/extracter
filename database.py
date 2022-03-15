@@ -32,7 +32,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-    doccument = db.relationship('Posts', backref="user")
+    doccument = db.relationship('Posts', backref="users")
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
 
