@@ -28,9 +28,9 @@ def user_create():
         }), HTTP_201_CREATED
 
 
-@views.post('/users') 
+@views.get('/users') 
 def users():  
-    id=request.json['id']
+    id=request.args.get('id')
     list = []
     users = Users.query.filter_by(user_id=id)
     for i in users:
