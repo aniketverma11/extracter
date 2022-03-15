@@ -68,10 +68,13 @@ def register_goole():
     db.session.add(user)
     db.session.commit()
 
+
+
+    user = User.query.filter_by(email=email).first()
     return jsonify({
         'message': "User created",
         'user': {
-            'username': name, "email":email
+            'username': user.username, "email":user.email, "id":user.id
         }
 
     }), HTTP_201_CREATED
