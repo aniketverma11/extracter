@@ -34,7 +34,7 @@ class Users(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     doccument = db.relationship('Posts', backref="users")
     def __repr__(self) -> str:
-        return 'User>>> {self.id}'
+        return f'User>>> {self.id}, {self.username}'
 
 
 class Posts(db.Model):

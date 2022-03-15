@@ -106,7 +106,7 @@ def login():
 @auth.post('/login_email')
 #swag_from('./docs/auth/login.yaml')
 def login_email():
-    email = request.json['email']
+    email = request.json.get('email', '')
     #password = request.json.get('password', '')
 
     user = User.query.filter_by(email=email).first()
