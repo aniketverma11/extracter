@@ -62,6 +62,7 @@ def blogs():
         return jsonify({
                 'message': "blog created",
                 'user': {
+                    'id':user.id,
                     'dr_name': user.dr_name, 
                     "catagory":user.cateory,
                     "time":user.reading_time,
@@ -98,15 +99,15 @@ def delete():
         "msg":"successfully delete"
     })
 
-@views.delete("delete_user")
-def delete():
-    id = request.args.get("id")
-    found_id = Users.query.filter_by(id=id).first()
-    db.session.delete(found_id)
-    db.session.commit()
-    return jsonify({
-        "msg":"successfully delete"
-    })
+#@views.delete("delete_user")
+#def delete():
+ #   id = request.args.get("id")
+ #   found_id = Users.query.filter_by(id=id).first()
+ #   db.session.delete(found_id)
+ #   db.session.commit()
+ #   return jsonify({
+  #      "msg":"successfully delete"
+  #  })
 
 
 @views.route('/', methods=['POST', 'GET'])
