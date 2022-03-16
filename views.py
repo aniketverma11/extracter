@@ -88,6 +88,16 @@ def all_post():
     return jsonify({'data':list}),HTTP_200_OK
 
 
+@views.delete("delete_posts")
+def delete():
+    id = request.args.get("id")
+    found_id = Posts.query.filter_by(id=id).first()
+    db.session.delete(found_id)
+    db.session.commit()
+    return jsonify({
+        "msg":"successfully delete"
+    })
+
 
 @views.route('/', methods=['POST', 'GET'])
 @jwt_required()
