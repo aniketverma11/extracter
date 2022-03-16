@@ -50,6 +50,7 @@ def users():
 def blogs():
     if request.method == 'POST':
         time = request.json["reading_time"]
+        title=request.json("title")
         img_link=request.json["im_link"]
         category = request.json["category"]
         description = request.json["description"]
@@ -63,6 +64,7 @@ def blogs():
                 'message': "blog created",
                 'user': {
                     'id':user.id,
+                    "title":user.title,
                     'dr_name': user.dr_name, 
                     "catagory":user.cateory,
                     "time":user.reading_time,
@@ -81,6 +83,7 @@ def all_post():
         list.append({
             "id":i.id,
             "drname":i.dr_name,
+            "title":i.title,
             "description":i.description,
             "img":i.img_link,
             'created_at': i.created_at,
