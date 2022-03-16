@@ -98,6 +98,16 @@ def delete():
         "msg":"successfully delete"
     })
 
+@views.delete("delete_user")
+def delete():
+    id = request.args.get("id")
+    found_id = Users.query.filter_by(id=id).first()
+    db.session.delete(found_id)
+    db.session.commit()
+    return jsonify({
+        "msg":"successfully delete"
+    })
+
 
 @views.route('/', methods=['POST', 'GET'])
 @jwt_required()
