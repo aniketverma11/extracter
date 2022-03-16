@@ -58,10 +58,16 @@ def blogs():
         blog = Posts(user_id = mobile, reading_time=time, cateory=category, description=description, dr_name=drname, img_link=img_link)
         db.session.add(blog)
         db.session.commit()
+        user = Posts.query.filter_by(description=description).first()
         return jsonify({
                 'message': "blog created",
                 'user': {
-                    'dr_name': drname, "catagory":category
+                    'dr_name': user.dr_name, 
+                    "catagory":user.cateory,
+                    "time":user.reading_time,
+                    "description":user.description,
+                    "creater_at":user.created_at
+
                 }
             }), HTTP_201_CREATED
 
