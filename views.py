@@ -56,7 +56,7 @@ def blogs():
         description = request.json["description"]
         drname = request.json["dr_name"]
         mobile = request.json["id"]
-        blog = Posts(user_id = mobile, reading_time=time, cateory=category, description=description, dr_name=drname, img_link=img_link)
+        blog = Posts(user_id = mobile, reading_time=time,title=title, cateory=category, description=description, dr_name=drname, img_link=img_link)
         db.session.add(blog)
         db.session.commit()
         user = Posts.query.filter_by(description=description).first()
