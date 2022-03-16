@@ -50,7 +50,7 @@ def users():
 def blogs():
     if request.method == 'POST':
         time = request.json["reading_time"]
-        title=request.json("title")
+        title=request.json["title"]
         img_link=request.json["im_link"]
         category = request.json["category"]
         description = request.json["description"]
