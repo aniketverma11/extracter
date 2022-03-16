@@ -59,7 +59,7 @@ def blogs():
         db.session.add(blog)
         db.session.commit()
         return jsonify({
-                'message': "User created",
+                'message': "blog created",
                 'user': {
                     'dr_name': drname, "catagory":category
                 }
