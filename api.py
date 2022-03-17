@@ -99,7 +99,8 @@ def login():
                 'access': access,
                 'username': user.username,
                 'mobile': user.mobile,
-                'id':user.id
+                'id':user.id,
+                'role':user.role
             }
         }), HTTP_200_OK
 
