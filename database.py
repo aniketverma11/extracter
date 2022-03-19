@@ -25,6 +25,20 @@ class User(db.Model):
     def __repr__(self) -> str:
         return 'User>>> {self.username}', 'User_id>>> {self.id}'
 
+class Patients(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80),nullable=False)
+    mobile = db.Column(db.Integer, nullable=True)
+    role = db.Column(db.String(80),nullable=False)
+    email = db.Column(db.String(120), nullable=True)
+    password = db.Column(db.Text(), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+    #doccument = db.relationship('Users', backref="user")
+
+    def __repr__(self) -> str:
+        return 'User>>> {self.username}', 'User_id>>> {self.id}'
+
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

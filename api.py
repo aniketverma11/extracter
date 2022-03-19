@@ -18,29 +18,55 @@ def register():
     password = request.json['password']
     role = request.json['role']
 
-    if len(password) <= 6:
-        return jsonify({'error': "Password is too short"}), HTTP_400_BAD_REQUEST
 
-    if len(username) < 3:
-        return jsonify({'error': "User is too short"}), HTTP_400_BAD_REQUEST
+    if role=="doctor":
+        if len(password) <= 6:
+            return jsonify({'error': "Password is too short"}), HTTP_400_BAD_REQUEST
 
-    if User.query.filter_by(mobile=mobile).first() is not None:
-        return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
-    
+        if len(username) < 3:
+            return jsonify({'error': "User is too short"}), HTTP_400_BAD_REQUEST
 
-    pwd_hash = generate_password_hash(password)
+        if User.query.filter_by(mobile=mobile).first() is not None:
+            return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
+        
 
-    user = User(username=username, mobile=mobile, role=role, password=pwd_hash)
-    db.session.add(user)
-    db.session.commit()
+        pwd_hash = generate_password_hash(password)
 
-    return jsonify({
-        'message': "User created",
+        user = User(username=username, mobile=mobile, role=role, password=pwd_hash)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({
+        'message': "Doctor created",
         'user': {
             'username': username, "mobile": mobile
         }
 
     }), HTTP_201_CREATED
+    
+    elif role=="patient":
+        if len(password) <= 6:
+            return jsonify({'error': "Password is too short"}), HTTP_400_BAD_REQUEST
+
+        if len(username) < 3:
+            return jsonify({'error': "User is too short"}), HTTP_400_BAD_REQUEST
+
+        if User.query.filter_by(mobile=mobile).first() is not None:
+            return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
+        
+
+        pwd_hash = generate_password_hash(password)
+
+        user = Patients(username=username, mobile=mobile, role=role, password=pwd_hash)
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({
+            'message': "Patient created",
+            'user': {
+                'username': username, "mobile": mobile
+            }
+
+        }), HTTP_201_CREATED
 
 @auth.post('/register_google')
 def register_goole():
@@ -48,7 +74,7 @@ def register_goole():
     name = request.json['username']
     role = request.json['role']
     user = User.query.filter_by(email=email).first()
-
+    user2 = Patients.query.filter_by(email=email).first()
     if user:
         
         refresh = create_refresh_token(identity=user.id)
@@ -63,21 +89,55 @@ def register_goole():
                 'id':user.id
             }
         }), HTTP_200_OK
+    
+    elif user2:
+        
+        refresh = create_refresh_token(identity=user2.id)
+        access = create_access_token(identity=user2.id)
 
-    user = User(username=name, role=role, email=email)
-    db.session.add(user)
-    db.session.commit()
+        return jsonify({
+            'user': {
+                'refresh': refresh,
+                'access': access,
+                'username': user2.username,
+                'mobile': user2.mobile,
+                'id':user2.id,
+                'role':user2.role
+            }
+        }), HTTP_200_OK
+    
+    if role=="doctor":
+        user = User(username=name, role=role, email=email)
+        db.session.add(user)
+        db.session.commit()
 
 
 
-    user = User.query.filter_by(email=email).first()
-    return jsonify({
-        'message': "User created",
-        'user': {
-            'username': user.username, "email":user.email, "id":user.id
-        }
+        user = User.query.filter_by(email=email).first()
+        return jsonify({
+            'message': "User created",
+            'user': {
+                'username': user.username, "email":user.email, "id":user.id
+            }
 
-    }), HTTP_201_CREATED
+        }), HTTP_201_CREATED
+    
+    elif role=="patient ":
+        user = Patients(username=name, role=role, email=email)
+        db.session.add(user)
+        db.session.commit()
+
+
+
+        user = Patients.query.filter_by(email=email).first()
+        return jsonify({
+            'message': "User created",
+            'user': {
+                'username': user.username, "email":user.email, "id":user.id
+            }
+
+        }), HTTP_201_CREATED
+
 
 
 @auth.post('/login')
@@ -87,7 +147,7 @@ def login():
     #password = request.json.get('password', '')
 
     user = User.query.filter_by(mobile=mobile).first()
-
+    user2 = Patients.query.filter_by(mobile=mobile).first()
     if user:
         
         refresh = create_refresh_token(identity=user.id)
@@ -101,6 +161,22 @@ def login():
                 'mobile': user.mobile,
                 'id':user.id,
                 'role':user.role
+            }
+        }), HTTP_200_OK
+    
+    elif user2:
+        
+        refresh = create_refresh_token(identity=user2.id)
+        access = create_access_token(identity=user2.id)
+
+        return jsonify({
+            'user': {
+                'refresh': refresh,
+                'access': access,
+                'username': user2.username,
+                'mobile': user2.mobile,
+                'id':user2.id,
+                'role':user2.role
             }
         }), HTTP_200_OK
 
