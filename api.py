@@ -11,7 +11,6 @@ from database import *
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 @auth.post('/register')
-#@swag_from('./docs/auth/register.yaml')
 def register():
     username = request.json['username']
     mobile = request.json['mobile']
@@ -141,10 +140,8 @@ def register_goole():
 
 
 @auth.post('/login')
-#swag_from('./docs/auth/login.yaml')
 def login():
     mobile = request.json.get('mobile', '')
-    #password = request.json.get('password', '')
 
     user = User.query.filter_by(mobile=mobile).first()
     user2 = Patients.query.filter_by(mobile=mobile).first()
@@ -184,11 +181,8 @@ def login():
 
 
 @auth.post('/login_email')
-#swag_from('./docs/auth/login.yaml')
 def login_email():
     email = request.json.get('email', '')
-    #password = request.json.get('password', '')
-
     user = User.query.filter_by(email=email).first()
 
     if user:
@@ -207,24 +201,3 @@ def login_email():
         }), HTTP_200_OK
 
     return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
-
-@auth.get("/us")
-@jwt_required()
-def users():
-    user_id = get_jwt_identity()
-    user = User.query.filter_by(id=user_id).first()
-    return jsonify({
-        'username': user.username,
-        'email': user.email
-    }), HTTP_200_OK
-
-
-@auth.get('/token/refresh')
-@jwt_required(refresh=True)
-def refresh_users_token():
-    identity = get_jwt_identity()
-    access = create_access_token(identity=identity)
-
-    return jsonify({
-        'access': access
-    }), HTTP_200_OK
