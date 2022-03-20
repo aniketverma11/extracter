@@ -49,7 +49,7 @@ def register():
         if len(username) < 3:
             return jsonify({'error': "User is too short"}), HTTP_400_BAD_REQUEST
 
-        if User.query.filter_by(mobile=mobile).first() is not None:
+        if Patients.query.filter_by(mobile=mobile).first() is not None:
             return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
         
 
@@ -58,7 +58,7 @@ def register():
         user = Patients(username=username, mobile=mobile, role=role, password=pwd_hash)
         db.session.add(user)
         db.session.commit()
-
+    
         return jsonify({
             'message': "Patient created",
             'user': {
@@ -69,9 +69,7 @@ def register():
 
 @auth.post('/register_google')
 def register_goole():
-    email = request.json['email']
-    name = request.json['username']
-    role = request.json['role']
+    email = request.json["email"]
     user = User.query.filter_by(email=email).first()
     user2 = Patients.query.filter_by(email=email).first()
     if user:
@@ -104,39 +102,6 @@ def register_goole():
                 'role':user2.role
             }
         }), HTTP_200_OK
-    
-    if role=="doctor":
-        user = User(username=name, role=role, email=email)
-        db.session.add(user)
-        db.session.commit()
-
-
-
-        user = User.query.filter_by(email=email).first()
-        return jsonify({
-            'message': "User created",
-            'user': {
-                'username': user.username, "email":user.email, "id":user.id
-            }
-
-        }), HTTP_201_CREATED
-    
-    elif role=="patient ":
-        user = Patients(username=name, role=role, email=email)
-        db.session.add(user)
-        db.session.commit()
-
-
-
-        user = Patients.query.filter_by(email=email).first()
-        return jsonify({
-            'message': "User created",
-            'user': {
-                'username': user.username, "email":user.email, "id":user.id
-            }
-
-        }), HTTP_201_CREATED
-
 
 
 @auth.post('/login')

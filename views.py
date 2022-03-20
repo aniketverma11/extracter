@@ -1,5 +1,3 @@
-import json
-from unicodedata import category
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -19,10 +17,11 @@ def user_create():
         user = Users(username=name, mobile=mobile, email=email, user_id=id)
         db.session.add(user)
         db.session.commit()
+        user = Users.query.filter_by(email=email).first()
         return jsonify({
             'message': "User created",
             'user': {
-                'username': name, "email":email
+                'username': user.name, "email":user.email, "id":user.id
             }
 
         }), HTTP_201_CREATED
@@ -41,7 +40,7 @@ def users():
                 'mobile': i.mobile,
                 'email': i.email,
                 'created_at': i.created_at,
-                'upated_at': i.updated_at,
+                'upated_at': i.updated_at
             })
     return jsonify({"data":list}),HTTP_200_OK
 
@@ -73,6 +72,12 @@ def blogs():
 
                 }
             }), HTTP_201_CREATED
+
+    choice = ["cardiology","Neeurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"]
+    return jsonify({"catagories":choice})
+
+
+
 
 @views.get("/all_posts")
 def all_post():
@@ -111,3 +116,65 @@ def delete():
  #   return jsonify({
   #      "msg":"successfully delete"
   #  })
+
+# create user from patient side
+
+@views.post('/patient_create')
+def patient_create():
+    if request.method == 'POST':
+        name = request.json['username']
+        mobile = request.json['mobile']
+        email = request.json['email']
+        id=request.json['id']
+        user = Patients_Users(username=name, mobile=mobile, email=email, user_id=id)
+        db.session.add(user)
+        db.session.commit()
+        user = Patients_Users.query.filter_by(email=email).first()
+        return jsonify({
+            'message': "User created",
+            'user': {
+                'username': user.name, "email":user.email, "id":user.id
+            }
+
+        }), HTTP_201_CREATED
+
+
+# show all users from patients side
+
+@views.get('/patients') 
+def patients():  
+    id=request.args.get('id')
+    list = []
+    users = Patients_Users.query.filter_by(user_id=id)
+    for i in users:
+        list.append({
+                'id': i.id,
+                "foreign_key":i.user_id,
+                'name': i.username,
+                'mobile': i.mobile,
+                'email': i.email,
+                'created_at': i.created_at,
+                'upated_at': i.updated_at
+            })
+    return jsonify({"data":list}),HTTP_200_OK
+
+
+# show all blog to patients
+
+@views.get('/blogs')
+def all_blogs():
+    blogs = Posts.query.all()
+    list = []
+    for i in blogs:
+        list.append({
+            "id":i.id,
+            "drname":i.dr_name,
+            "title":i.title,
+            "description":i.description,
+            "img":i.img_link,
+            'created_at': i.created_at,
+            'upated_at': i.updated_at
+        })
+    return jsonify({'data':list}),HTTP_200_OK
+
+
