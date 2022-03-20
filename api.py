@@ -13,6 +13,7 @@ auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 def register():
     username = request.json['username']
     mobile = request.json['mobile']
+    email = request.json["email"]
     password = request.json['password']
     role = request.json['role']
 
@@ -30,7 +31,7 @@ def register():
 
         pwd_hash = generate_password_hash(password)
 
-        user = User(username=username, mobile=mobile, role=role, password=pwd_hash)
+        user = User(username=username, mobile=mobile, role=role, password=pwd_hash, email=email)
         db.session.add(user)
         db.session.commit()
         user = User.query.filter_by(mobile=mobile).first()
