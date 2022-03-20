@@ -1,4 +1,3 @@
-import email
 from flask import Blueprint, app, request, jsonify, Flask, json
 #from flask_restful import Resource, Api, request
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -34,13 +33,14 @@ def register():
         user = User(username=username, mobile=mobile, role=role, password=pwd_hash)
         db.session.add(user)
         db.session.commit()
+        user = User.query.filter_by(mobile=mobile).first()
         return jsonify({
-        'message': "Doctor created",
-        'user': {
-            'username': username, "mobile": mobile
-        }
+            'message': "Patient created",
+            'user': {
+                'username': user.username, "mobile": user.mobile, "id":user.id, "role":user.role
+            }
 
-    }), HTTP_201_CREATED
+        }), HTTP_201_CREATED
     
     elif role=="patient":
         if len(password) <= 6:
@@ -58,11 +58,11 @@ def register():
         user = Patients(username=username, mobile=mobile, role=role, password=pwd_hash)
         db.session.add(user)
         db.session.commit()
-    
+        user = Patients.query.filter_by(mobile=mobile).first()
         return jsonify({
             'message': "Patient created",
             'user': {
-                'username': username, "mobile": mobile
+                'username': user.username, "mobile": user.mobile, "id":user.id, "role":user.role
             }
 
         }), HTTP_201_CREATED
