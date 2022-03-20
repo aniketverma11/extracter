@@ -45,7 +45,7 @@ def users():
     return jsonify({"data":list}),HTTP_200_OK
 
 
-@views.post("/user_blog_create")
+@views.route("/user_blog_create", methods=['POST', 'GET'])
 def blogs():
     if request.method == 'POST':
         time = request.json["reading_time"]
