@@ -178,3 +178,16 @@ def all_blogs():
     return jsonify({'data':list}),HTTP_200_OK
 
 
+# get all doctor contact details for consultant
+
+@views.get('/contact')
+def doctoer():
+    doctors = User.query.all()
+    list =[]
+    for doctor in doctors:
+        list.append({
+            "name":doctor.username,
+            "mobile":doctor.mobile,
+            "email":doctor.email
+        })
+    return jsonify({"contacts":list})
