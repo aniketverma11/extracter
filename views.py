@@ -21,7 +21,7 @@ def user_create():
         return jsonify({
             'message': "User created",
             'user': {
-                'username': user.name, "email":user.email, "id":user.id
+                'username': user.username, "email":user.email, "id":user.id
             }
 
         }), HTTP_201_CREATED
