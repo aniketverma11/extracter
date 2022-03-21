@@ -146,21 +146,22 @@ def patient_create():
 def patients():  
     id=request.args.get('id')
     user1= Patients.query.filter_by(id=id).first()
-    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id, 'created_at':user1.created_at, 'upated_at': user1.updated_at}]
-    users = Patients_Users.query.filter_by(user_id=id)
-    for i in users:
-        list.append({
-                'id': i.id,
-                "foreign_key":i.user_id,
-                'name': i.username,
-                'mobile': i.mobile,
-                'email': i.email,
-                'created_at': i.created_at,
-                'upated_at': i.updated_at
-            })
-    return jsonify({"data":list}),HTTP_200_OK
+    if user1:
+        list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id, 'created_at':user1.created_at, 'upated_at': user1.updated_at}]
+        users = Patients_Users.query.filter_by(user_id=id)
+        for i in users:
+            list.append({
+                    'id': i.id,
+                    "foreign_key":i.user_id,
+                    'name': i.username,
+                    'mobile': i.mobile,
+                    'email': i.email,
+                    'created_at': i.created_at,
+                    'upated_at': i.updated_at
+                })
+        return jsonify({"data":list}),HTTP_200_OK
 
-
+    return jsonify({'msg':'user does not exist'})
 # show all blog to patients
 
 @views.get('/blogs')
