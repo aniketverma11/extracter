@@ -30,7 +30,8 @@ def user_create():
 @views.get('/users') 
 def users():  
     id=request.args.get('id')
-    list = []
+    user1= User.query.filter_by(id=id).first()
+    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile}]
     users = Users.query.filter_by(user_id=id)
     for i in users:
         list.append({
@@ -82,8 +83,8 @@ def blogs():
 @views.get("/all_posts")
 def all_post():
     id = request.args.get("id")
-    posts = Posts.query.filter_by(user_id=id)
     list = []
+    posts = Posts.query.filter_by(user_id=id)
     for i in posts:
         list.append({
             "id":i.id,
@@ -144,7 +145,8 @@ def patient_create():
 @views.get('/patients') 
 def patients():  
     id=request.args.get('id')
-    list = []
+    user1= Patients.query.filter_by(id=id).first()
+    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile}]
     users = Patients_Users.query.filter_by(user_id=id)
     for i in users:
         list.append({
@@ -191,3 +193,5 @@ def doctoer():
             "email":doctor.email
         })
     return jsonify({"contacts":list})
+
+
