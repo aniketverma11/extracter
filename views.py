@@ -31,7 +31,7 @@ def user_create():
 def users():  
     id=request.args.get('id')
     user1= User.query.filter_by(id=id).first()
-    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id}]
+    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id, 'created_at':user1.created_at, 'upated_at': user1.updated_at}]
     users = Users.query.filter_by(user_id=id)
     for i in users:
         list.append({
@@ -146,7 +146,7 @@ def patient_create():
 def patients():  
     id=request.args.get('id')
     user1= Patients.query.filter_by(id=id).first()
-    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id}]
+    list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id, 'created_at':user1.created_at, 'upated_at': user1.updated_at}]
     users = Patients_Users.query.filter_by(user_id=id)
     for i in users:
         list.append({
