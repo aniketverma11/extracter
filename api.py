@@ -91,7 +91,8 @@ def register_goole():
                 'access': access,
                 'username': user.username,
                 'mobile': user.email,
-                'id':user.id
+                'id':user.id,
+                'role':user.role
             }
         }), HTTP_200_OK
     
