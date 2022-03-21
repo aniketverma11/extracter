@@ -28,6 +28,9 @@ def register():
         if User.query.filter_by(mobile=mobile).first() is not None:
             return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
         
+        if User.query.filter_by(email=email).first() is not None:
+            return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
+        
 
         pwd_hash = generate_password_hash(password)
 
@@ -53,10 +56,12 @@ def register():
         if Patients.query.filter_by(mobile=mobile).first() is not None:
             return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
         
+        if Patients.query.filter_by(email=email).first() is not None:
+            return jsonify({'error': "Mobile Number is taken"}), HTTP_409_CONFLICT
 
         pwd_hash = generate_password_hash(password)
 
-        user = Patients(username=username, mobile=mobile, role=role, password=pwd_hash)
+        user = Patients(username=username, mobile=mobile, email=email, role=role, password=pwd_hash)
         db.session.add(user)
         db.session.commit()
         user = Patients.query.filter_by(mobile=mobile).first()
@@ -67,6 +72,8 @@ def register():
             }
 
         }), HTTP_201_CREATED
+    
+    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
 
 @auth.post('/register_google')
 def register_goole():
@@ -103,7 +110,7 @@ def register_goole():
                 'role':user2.role
             }
         }), HTTP_200_OK
-
+    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
 
 @auth.post('/login')
 def login():
