@@ -197,3 +197,19 @@ def doctoer():
     return jsonify({"contacts":list})
 
 
+# see all content inside users table
+@views.get('/tableusers')
+def table():
+    users = Users.query.all()
+    list = []
+    for i in users:
+        list.append({
+            'id': i.id,
+            "foreign_key":i.user_id,
+            'name': i.username,
+            'mobile': i.mobile,
+            'email': i.email,
+            'created_at': i.created_at,
+            'upated_at': i.updated_at
+        })
+    return jsonify({"data":list}),HTTP_200_OK
