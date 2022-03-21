@@ -73,7 +73,7 @@ def register():
 
         }), HTTP_201_CREATED
     
-    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'email or mobile does not exist'}), HTTP_401_UNAUTHORIZED
 
 @auth.post('/register_google')
 def register_goole():
@@ -110,7 +110,7 @@ def register_goole():
                 'role':user2.role
             }
         }), HTTP_200_OK
-    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'email or mobile does not exist'}), HTTP_401_UNAUTHORIZED
 
 @auth.post('/login')
 def login():
@@ -150,7 +150,7 @@ def login():
             }
         }), HTTP_200_OK
 
-    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'email or mobile does not exist'}), HTTP_401_UNAUTHORIZED
 
 
 @auth.post('/login_email')
@@ -173,4 +173,4 @@ def login_email():
             }
         }), HTTP_200_OK
 
-    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'email or mobile does not exist'}), HTTP_401_UNAUTHORIZED
