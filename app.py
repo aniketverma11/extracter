@@ -12,12 +12,12 @@ from flask_migrate import Migrate
 def create_app(test_config=None):
 
     app = Flask(__name__, instance_relative_config=True)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, render_as_batch=True)
 
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY="SECRET_key",
-            SQLALCHEMY_DATABASE_URI= "sqlite:///simplihealth.db",
+            SQLALCHEMY_DATABASE_URI= "sqlite:///simpli.db",
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             JWT_SECRET_KEY="This_is_a_key"
 

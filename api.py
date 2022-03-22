@@ -39,7 +39,7 @@ def register():
         db.session.commit()
         user = User.query.filter_by(mobile=mobile).first()
         return jsonify({
-            'message': "Patient created",
+            'message': "Doctor created",
             'user': {
                 'username': user.username, "mobile": user.mobile, "id":user.id, "role":user.role
             }

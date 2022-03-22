@@ -128,10 +128,10 @@ def patient_create():
         mobile = request.json['mobile']
         email = request.json['email']
         id=request.json['id']
-        user = Patients_Users(username=name, mobile=mobile, email=email, user_id=id)
+        user = Patientsusers(username=name, mobile=mobile, email=email, user_id=id)
         db.session.add(user)
         db.session.commit()
-        user = Patients_Users.query.filter_by(email=email).first()
+        user = Patientsusers.query.filter_by(email=email).first()
         return jsonify({
             'message': "User created",
             'user': {
@@ -149,7 +149,7 @@ def patients():
     user1= Patients.query.filter_by(id=id).first()
     if user1:
         list = [{"name":user1.username, "email":user1.email, "mobile":user1.mobile, "id":user1.id, 'created_at':user1.created_at, 'upated_at': user1.updated_at}]
-        users = Patients_Users.query.filter_by(user_id=id)
+        users = Patientsusers.query.filter_by(user_id=id)
         for i in users:
             list.append({
                     'id': i.id,
@@ -197,6 +197,49 @@ def doctoer():
     return jsonify({"contacts":list})
 
 
+# for the collection of pdf files 
+
+@views.route('/collection', methods=['POST', 'GET'])
+def collection():
+    if request.method=='POST':
+        title = request.json['title']
+        path= request.json['path']
+        link_list = request.json['l_list']
+        id = request.json['id'] #take id from Patient_user table so that we can create multiple collection for patients
+        for i in link_list:
+            pdf_name= i['name']
+            link = i['link']
+            user = Extracter(user_id=id, col_name=title, url=link, pdfname=pdf_name, path= path)
+            db.session.add(user)
+            db.session.commit()
+        user = Extracter.query.filter_by(col_name=title)
+        list = []
+        for i in user:
+            list.append({
+                "title":i.col_name,
+                "id":i.id,
+                "link":i.url,
+                "created_at":i.created_at
+            })
+        return jsonify({"data":list})
+    id = request.args.get('id') #user id who make collection
+    title = request.args.get('title') # collection name
+    data = Extracter.query.filter_by(user_id=id)
+    l = []
+    for i in data:
+        l.append({
+            "date":i.created_at,
+            "name": i.pdfname,
+            "url":i.url,
+            "collection_name":i.col_name
+        })
+    return jsonify({"data":l})
+
+
+
+
+
+
 # see all content inside users table
 @views.get('/tableusers')
 def table():
@@ -209,7 +252,7 @@ def table():
             'name': i.username,
             'mobile': i.mobile,
             'email': i.email,
-            'created_at': i.created_at,
+            'created_at': i.created_at,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
             'upated_at': i.updated_at
         })
     return jsonify({"data":list}),HTTP_200_OK
