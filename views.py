@@ -203,35 +203,38 @@ def doctoer():
 def collection():
     if request.method=='POST':
         title = request.json['title']
-        path= request.json['path']
         link_list = request.json['l_list']
         id = request.json['id'] #take id from Patient_user table so that we can create multiple collection for patients
         for i in link_list:
+            path= i['path']
             pdf_name= i['name']
             link = i['link']
             user = Extracter(user_id=id, col_name=title, url=link, pdfname=pdf_name, path= path)
             db.session.add(user)
             db.session.commit()
-        user = Extracter.query.filter_by(col_name=title)
+        user = Extracter.query.filter_by(user_id=id,col_name=title)
         list = []
         for i in user:
             list.append({
                 "title":i.col_name,
                 "id":i.id,
                 "link":i.url,
-                "created_at":i.created_at
+                "created_at":i.created_at,
+                "collection_id":i.id
+                    
             })
         return jsonify({"data":list})
-    id = request.args.get('id') #user id who make collection
-    title = request.args.get('title') # collection name
-    data = Extracter.query.filter_by(user_id=id)
+    id = request.args.get('id', type = int) #user id who make collection
+    title = request.args.get('title', type = str) # collection name
+    data = Extracter.query.filter_by(user_id=id, col_name=title)
     l = []
     for i in data:
         l.append({
             "date":i.created_at,
             "name": i.pdfname,
             "url":i.url,
-            "collection_name":i.col_name
+            "collection_name":i.col_name,
+            "collection_id":i.id
         })
     return jsonify({"data":l})
 
