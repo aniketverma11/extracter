@@ -66,8 +66,7 @@ def blogs():
                 'user': {
                     'id':user.id,
                     "title":user.title,
-                    'dr_name': user.dr_name, 
-                    "catagory":user.cateory,
+                    'dr_name': user.dr_name,
                     "time":user.reading_time,
                     "description":user.description,
                     "creater_at":user.created_at
@@ -75,7 +74,7 @@ def blogs():
                 }
             }), HTTP_201_CREATED
 
-    choice = ["cardiology","Neeurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"]
+    choice = ["Cardiology","Neurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"]
     return jsonify({"catagories":choice})
 
 
@@ -88,6 +87,7 @@ def all_post():
     posts = Posts.query.filter_by(user_id=id)
     for i in posts:
         list.append({
+            "catagory":i.cateory,
             "id":i.id,
             "drname":i.dr_name,
             "title":i.title,
@@ -167,21 +167,37 @@ def patients():
 
 @views.get('/blogs')
 def all_blogs():
-    blogs = Posts.query.all()
+    choice = request.args.get('category', type=str)
     list = []
+    if choice:
+        blogs = Posts.query.filter_by(cateory=choice)
+        for i in blogs:
+                list.append({
+                    "catagory":i.cateory,
+                    "id":i.id,
+                    "drname":i.dr_name,
+                    "title":i.title,
+                    "description":i.description,
+                    "img":i.img_link,
+                    'created_at': i.created_at,
+                    'upated_at': i.updated_at
+                })
+        return jsonify({'data':list}),HTTP_200_OK
+    
+    blogs = Posts.query.all()
     for i in blogs:
-        list.append({
-            "id":i.id,
-            "drname":i.dr_name,
-            "title":i.title,
-            "description":i.description,
-            "img":i.img_link,
-            'created_at': i.created_at,
-            'upated_at': i.updated_at
-        })
+            list.append({
+                "catagory":i.cateory,
+                "id":i.id,
+                "drname":i.dr_name,
+                "title":i.title,
+                "description":i.description,
+                "img":i.img_link,
+                'created_at': i.created_at,
+                'upated_at': i.updated_at
+            })
     return jsonify({'data':list}),HTTP_200_OK
-
-
+# "cardiology","Neeurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"
 # get all doctor contact details for consultant
 
 @views.get('/contact')
