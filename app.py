@@ -7,7 +7,8 @@ from database import db
 from flask_jwt_extended import JWTManager
 from views import views
 from flask_migrate import Migrate
-
+from find import dele
+from ocr import ocr_app
 
 def create_app(test_config=None):
 
@@ -32,6 +33,8 @@ def create_app(test_config=None):
     JWTManager(app)
     app.register_blueprint(auth)
     app.register_blueprint(views)
+    app.register_blueprint(dele)
+    app.register_blueprint(ocr_app)
     return app
 
 

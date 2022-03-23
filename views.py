@@ -103,12 +103,15 @@ def all_post():
 def delete():
     id = request.args.get("id")
     found_id = Posts.query.filter_by(id=id).first()
-    db.session.delete(found_id)
-    db.session.commit()
+    if found_id:
+        db.session.delete(found_id)
+        db.session.commit()
+        return jsonify({
+            "msg":"successfully delete"
+        })
     return jsonify({
-        "msg":"successfully delete"
-    })
-
+            "msg":"user does not exist"
+        })
 #@views.delete("delete_user")
 #def delete():
  #   id = request.args.get("id")
@@ -245,14 +248,15 @@ def collection():
     data = Extracter.query.filter_by(user_id=id, col_name=title)
     l = []
     for i in data:
-        l.append({
+        l.append({"collection":i.col_name,"data":{
             "date":i.created_at,
             "name": i.pdfname,
             "url":i.url,
-            "collection_name":i.col_name,
-            "collection_id":i.id
-        })
-    return jsonify({"data":l})
+            "id":i.id
+            
+            
+        }})
+    return jsonify({"list":l})
 
 
 

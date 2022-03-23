@@ -91,18 +91,3 @@ class Extracter(db.Model):
     def __repr__(self) -> str:
         return f'doccument>>> {self.id}, {self.url}'
 
-
-
-#class PdfExtracter(db.Model):pdfname=db.Column(db.String(80), nullable=True)
- #   id = db.Column(db.Integer, primary_key=True)
- #   user_id = db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
-  # col_name = db.Column(db.String(80), nullable=True)
-   # url = db.Column(db.String(500), nullable=True)
-#3 path = db.Column(db.String(500), nullable=True)
- #   visits = db.Column(db.Integer, default=0)
-  #  created_at = db.Column(db.DateTime, default=datetime.now())
-   # updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-#
-#
- #   def __repr__(self) -> str:
-  #      return f'doccument>>> {self.id}, {self.url}'
