@@ -234,14 +234,13 @@ def collection():
         user = Extracter.query.filter_by(user_id=id,col_name=title)
         list = []
         for i in user:
-            list.append({
-                "title":i.col_name,
-                "id":i.id,
-                "link":i.url,
-                "created_at":i.created_at,
-                "collection_id":i.id
+            list.append({"collection":i.col_name,"data":{
+            "date":i.created_at,
+            "name": i.pdfname,
+            "url":i.url,
+            "id":i.id
                     
-            })
+            }})
         return jsonify({"data":list})
     id = request.args.get('id', type = int) #user id who make collection
     title = request.args.get('title', type = str) # collection name
