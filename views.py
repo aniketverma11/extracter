@@ -251,7 +251,7 @@ def collection():
                     "pdf_id":i.id
                 })
             
-            return jsonify({"collection":user.coll_name,"id":user.id,"list":list}), HTTP_200_OK
+            return jsonify({"collection":user.coll_name,"id":user.id,"created":user.created_at,"list":list}), HTTP_200_OK
 
             
 
@@ -270,9 +270,10 @@ def collection():
                     "url":j.url,
                     "name":j.pdfname,
                     "path":j.path,
-                    "pdf_id":j.id
+                    "pdf_id":j.id,
+                    "created":j.created_at
                 })
-            list.append({"collection":i.coll_name,"id":i.id,"list":l})    
+            list.append({"collection":i.coll_name,"id":i.id,"created":i.created_at,"list":l})    
             
 
         return jsonify({"list":list})
