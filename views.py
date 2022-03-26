@@ -1,4 +1,4 @@
-from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
+from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
 import validators
@@ -221,60 +221,35 @@ def doctoer():
 @views.route('/collection', methods=['POST', 'GET'])
 def collection():
     if request.method=='POST':
-        title = request.json['title']
-        link_list = request.json['l_list']
-        id = request.json['id'] #take id from Patient_user table so that we can create multiple collection for patients
-        for i in link_list:
-            path= i['path']
-            pdf_name= i['name']
-            link = i['link']
-            user = Extracter(user_id=id, col_name=title, url=link, pdfname=pdf_name, path= path)
-            db.session.add(user)
+        try:
+            title = request.json['title']
+            link_list = request.json['l_list']
+            id = request.json['id'] #take id from Patient_user table so that we can create multiple collection for patients
+            collect = Collection(user_id=id, coll_name=title)
+            db.session.add(collect)
             db.session.commit()
-        user = Extracter.query.filter_by(user_id=id,col_name=title)
-        list = []
-        for i in user:
-            list.append({"collection":i.col_name,"data":{
-            "date":i.created_at,
-            "name": i.pdfname,
-            "url":i.url,
-            "id":i.id
-                    
-            }})
-        return jsonify({"data":list})
-    id = request.args.get('id', type = int) #user id who make collection
-    title = request.args.get('title', type = str) # collection name
-    data = Extracter.query.filter_by(user_id=id, col_name=title)
-    l = []
-    for i in data:
-        l.append({"collection":i.col_name,"data":{
-            "date":i.created_at,
-            "name": i.pdfname,
-            "url":i.url,
-            "id":i.id
+            for i in link_list:
+                id = title
+                url = i["link"]
+                name = i["name"]
+                path = i["path"]
+                extract = Extracter(user_id=id, col_name=title, pdfname=name, url=url, path=path)
+                db.session.add(extract)
+                db.session.commit()
+            user = Collection.query.filter_by(coll_name=title).first()
+            user2 = Extracter.query.filter_by(user_id=user.coll_name)
+            list = []
+            for i in user2:
+                list.append({
+                    "url":i.url,
+                    "name":i.pdfname,
+                    "path":i.path,
+                    "pdf_id":i.id
+                })
             
+            return jsonify({"collection":user.coll_name,"id":user.id,"list":list}), HTTP_200_OK
+
             
-        }})
-    return jsonify({"list":l})
 
-
-
-
-
-
-# see all content inside users table
-@views.get('/tableusers')
-def table():
-    users = Users.query.all()
-    list = []
-    for i in users:
-        list.append({
-            'id': i.id,
-            "foreign_key":i.user_id,
-            'name': i.username,
-            'mobile': i.mobile,
-            'email': i.email,
-            'created_at': i.created_at,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-            'upated_at': i.updated_at
-        })
-    return jsonify({"data":list}),HTTP_200_OK
+        except Exception as e:
+            return jsonify({"msg":"something went wrong"}), HTTP_500_INTERNAL_SERVER_ERROR
