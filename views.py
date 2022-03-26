@@ -257,3 +257,24 @@ def collection():
 
         except Exception as e:
             return jsonify({"msg":"something went wrong"}), HTTP_500_INTERNAL_SERVER_ERROR
+    try:
+        id = request.args.get('id', type=int)
+        list = []
+        user = Collection.query.filter_by(user_id=id)
+        for i in user:
+            col = i.coll_name
+            l = []
+            user2 = Extracter.query.filter_by(user_id=col)
+            for j in user2:
+                l.append({
+                    "url":j.url,
+                    "name":j.pdfname,
+                    "path":j.path,
+                    "pdf_id":j.id
+                })
+            list.append({"collection":i.coll_name,"id":i.id,"list":l})    
+            
+
+        return jsonify({"list":list})
+    except Exception:
+        return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST

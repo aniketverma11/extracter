@@ -153,10 +153,10 @@ def pdf():
         for i in find:
             list.append({
                 'id':i.id,
-                'name':i.username,
-                'mobile':i.mobile,
-                'email':i.email,
-                'role':i.role,
+                "collection":i.col_name,
+                'pdfname':i.pdfname,
+                "url":i.url,
+                "path":i.path,
                 'created':i.created_at
             })
         return jsonify({'data':list})
@@ -171,3 +171,18 @@ def pdf():
     return jsonify({
             "msg":"collection does not exist"
         })
+
+@dele.route('/col',methods=['GET','DELETE'])
+def col():
+    if request.method=='GET':
+        find = Collection.query.all()
+        list = []
+        for i in find:
+            list.append({
+                'id':i.id,
+                "collection":i.coll_name,
+                'created':i.created_at
+
+            })
+                
+        return jsonify({'data':list})
