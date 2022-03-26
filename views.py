@@ -11,17 +11,18 @@ views = Blueprint("views", __name__, url_prefix="/api/v1/views")
 def user_create():
     if request.method == 'POST':
         name = request.json['username']
+        link = request.json['img_link']
         mobile = request.json['mobile']
         email = request.json['email']
         id=request.json['id']
-        user = Users(username=name, mobile=mobile, email=email, user_id=id)
+        user = Users(username=name,img_link=link, mobile=mobile, email=email, user_id=id)
         db.session.add(user)
         db.session.commit()
         user = Users.query.filter_by(email=email).first()
         return jsonify({
             'message': "User created",
             'user': {
-                'username': user.username, "email":user.email, "id":user.id
+                'username': user.username, "email":user.email, "id":user.id, "img":user.img_link
             }
 
         }), HTTP_201_CREATED
