@@ -72,6 +72,7 @@ class Patientsusers(db.Model):
     username = db.Column(db.String(80),nullable=False)
     mobile = db.Column(db.Integer, nullable=True)
     email = db.Column(db.String(120), nullable=True)
+    img_link = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     doccument = db.relationship('Collection', backref="Patientsusers")

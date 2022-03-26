@@ -15,7 +15,7 @@ def user_create():
         mobile = request.json['mobile']
         email = request.json['email']
         id=request.json['id']
-        user = Users(username=name,img_link=link, mobile=mobile, email=email, user_id=id)
+        user = Users(username=name,img_link=link,mobile=mobile, email=email, user_id=id)
         db.session.add(user)
         db.session.commit()
         user = Users.query.filter_by(email=email).first()
@@ -40,6 +40,7 @@ def users():
                     'id': i.id,
                     "foreign_key":i.user_id,
                     'name': i.username,
+                    'img':i.img_link,
                     'mobile': i.mobile,
                     'email': i.email,
                     'created_at': i.created_at,
@@ -129,17 +130,18 @@ def delete():
 def patient_create():
     if request.method == 'POST':
         name = request.json['username']
+        link = request.json['img_link']
         mobile = request.json['mobile']
         email = request.json['email']
         id=request.json['id']
-        user = Patientsusers(username=name, mobile=mobile, email=email, user_id=id)
+        user = Patientsusers(username=name, img_link=link, mobile=mobile, email=email, user_id=id)
         db.session.add(user)
         db.session.commit()
         user = Patientsusers.query.filter_by(email=email).first()
         return jsonify({
             'message': "User created",
             'user': {
-                'username': user.username, "email":user.email, "id":user.id
+                'username': user.username, "email":user.email, "id":user.id, 'img':user.img_link
             }
 
         }), HTTP_201_CREATED
@@ -158,6 +160,7 @@ def patients():
             list.append({
                     'id': i.id,
                     "foreign_key":i.user_id,
+                    "img":i.img_link,
                     'name': i.username,
                     'mobile': i.mobile,
                     'email': i.email,
