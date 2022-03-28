@@ -1,3 +1,4 @@
+from http.client import REQUESTED_RANGE_NOT_SATISFIABLE
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -279,3 +280,60 @@ def collection():
         return jsonify({"list":list})
     except Exception:
         return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST
+
+
+
+# edit user detail from patient side 
+
+@views.put('/update_patient')
+def edituser():
+    try:
+        id = request.args.get('id')
+        user = Patientsusers.query.filter_by(id=id).first()
+        if user:
+            name = request.json['name']
+            img = request.json['img']
+            mobile = request.json['mobile']
+            email = request.json['email']
+            user.username=name
+            user.mobile=mobile
+            user.email=email
+            user.img_link=img
+            db.session.commit()
+        return jsonify({
+            "name":user.username,
+            "img":user.img_link,
+            "mobile":user.mobile,
+            "email":user.email
+        }), HTTP_201_CREATED
+        
+    except Exception as e:
+        return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
+
+
+# edit user detail from patient side 
+
+@views.put('/update_docuser')
+def edit_user():
+    try:
+        id = request.args.get('id')
+        user = Users.query.filter_by(id=id).first()
+        if user:
+            name = request.json['name']
+            img = request.json['img']
+            mobile = request.json['mobile']
+            email = request.json['email']
+            user.username=name
+            user.mobile=mobile
+            user.email=email
+            user.img_link=img
+            db.session.commit()
+        return jsonify({
+            "name":user.username,
+            "img":user.img_link,
+            "mobile":user.mobile,
+            "email":user.email
+        }), HTTP_201_CREATED
+        
+    except Exception as e:
+        return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
