@@ -76,6 +76,7 @@ class Patientsusers(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     doccument = db.relationship('Collection', backref="Patientsusers")
+    doccument1 = db.relationship('Extracter', backref="Patientsusers")
     def __repr__(self) -> str:
         return f'User>>> {self.id}, {self.username}'
 
@@ -84,16 +85,17 @@ class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
     coll_name = db.Column(db.String(80), nullable=True)
+    col_ty = db.Column(db.String(80), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-    doccument = db.relationship('Extracter', backref="Collection")
+    #doccument = db.relationship('Extracter', backref="Collection")
     def __repr__(self) -> str:
         return f'User>>> {self.id}, {self.coll_name}'
 
 
 class Extracter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(80), db.ForeignKey('collection.coll_name'))
+    user_id = db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
     col_name = db.Column(db.String(80), nullable=True)
     pdfname=db.Column(db.String(80), nullable=True)
     url = db.Column(db.String(500), nullable=True)

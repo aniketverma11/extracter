@@ -234,15 +234,15 @@ def collection():
             db.session.add(collect)
             db.session.commit()
             for i in link_list:
-                id = title
+                colname = title
                 url = i["link"]
                 name = i["name"]
                 path = i["path"]
-                extract = Extracter(user_id=id, col_name=title, pdfname=name, url=url, path=path)
+                extract = Extracter(user_id=id, col_name=colname, pdfname=name, url=url, path=path)
                 db.session.add(extract)
                 db.session.commit()
-            user = Collection.query.filter_by(coll_name=title).first()
-            user2 = Extracter.query.filter_by(user_id=user.coll_name)
+            user = Collection.query.filter_by(user_id = id, coll_name=title).first()
+            user2 = Extracter.query.filter_by(user_id=id, col_name=user.coll_name)
             list = []
             for i in user2:
                 list.append({
@@ -265,7 +265,7 @@ def collection():
         for i in user:
             col = i.coll_name
             l = []
-            user2 = Extracter.query.filter_by(user_id=col)
+            user2 = Extracter.query.filter_by(col_name=col,user_id=id)
             for j in user2:
                 l.append({
                     "url":j.url,
@@ -276,7 +276,7 @@ def collection():
                 })
             list.append({"collection":i.coll_name,"id":i.id,"created":i.created_at,"list":l})    
             
-
+       
         return jsonify({"list":list})
     except Exception:
         return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST
@@ -337,3 +337,46 @@ def edit_user():
         
     except Exception as e:
         return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
+
+
+@views.route('/pdf', methods=['GET','POST','PUT','DELETE'])
+def pdf():
+    if request.method == 'POST':
+        try:
+            id = request.json['id']
+            pdfname = request.json['pdfname']
+            type = request.json['type']
+            pdfurl = request.json['url']
+            path = request.json['path']
+            user = Extracter(user_id=id, col_name=type, pdfname=pdfname,url=pdfurl, path=path )
+            db.session.add(user)
+            db.session.commit()
+            find = Extracter.query.filter_by(pdfname=pdfname,col_name=type).first()
+            return jsonify({
+                "id":find.id,
+                "user_id": find.user_id,
+                "padfname":find.pdfname,
+                "type":find.col_name,
+                "pdfurl":find.url,
+                "path":find.path
+            })
+            
+        except Exception as e:
+            return jsonify({"msg":"error"})
+
+    elif request.method == 'GET':
+        id = request.args.get('id')
+        type = 'pdf'
+        pdfs = Extracter.query.filter_by(user_id=id, col_name=type)
+        list = []
+        for pdf in pdfs:
+            list.append({
+                "id":pdf.id,
+                "user_id":pdf.user_id,
+                "type":pdf.col_name,
+                "pdfname":pdf.pdfname,
+                "url":pdf.url,
+                "path":pdf.path
+            })
+
+        return jsonify({"list":list})
