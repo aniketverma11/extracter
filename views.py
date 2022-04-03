@@ -1,4 +1,5 @@
 from http.client import REQUESTED_RANGE_NOT_SATISFIABLE
+from unicodedata import category
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -257,7 +258,7 @@ def collection():
             
 
         except Exception as e:
-            return jsonify({"msg":"something went wrong"}), HTTP_500_INTERNAL_SERVER_ERROR
+            return jsonify({"msg":"something went wrong","error":e}), HTTP_500_INTERNAL_SERVER_ERROR
     try:
         id = request.args.get('id', type=int)
         list = []
@@ -380,3 +381,28 @@ def pdf():
             })
 
         return jsonify({"list":list})
+
+@views.put('/update_blog')
+def editblog():
+    try:
+        id = request.args.get('id')
+        user = Posts.query.filter_by(id=id).first()
+        if user:
+            title = request.json['title']
+            imglink = request.json['img_link']
+            category = request.json['category']
+            description = request.json['description']
+            user.title=title
+            user.img_link=imglink
+            user.cateory=category
+            user.description=description
+            db.session.commit()
+        return jsonify({
+            "title":user.title,
+            "img_link":user.img_link,
+            "category":user.cateory,
+            "description":user.description
+        }), HTTP_201_CREATED
+        
+    except Exception as e:
+        return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
