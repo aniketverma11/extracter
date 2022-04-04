@@ -64,7 +64,7 @@ def blogs():
         blog = Posts(user_id = mobile, reading_time=time,title=title, cateory=category, description=description, dr_name=drname, img_link=img_link)
         db.session.add(blog)
         db.session.commit()
-        user = Posts.query.filter_by(description=description).first()
+        user = Posts.query.filter_by(description=description,title=title).first()
         return jsonify({
                 'message': "blog created",
                 'user': {
@@ -401,7 +401,9 @@ def editblog():
             "title":user.title,
             "img_link":user.img_link,
             "category":user.cateory,
-            "description":user.description
+            "description":user.description,
+            "update_at":user.updated_at,
+            "id":user.id
         }), HTTP_201_CREATED
         
     except Exception as e:
