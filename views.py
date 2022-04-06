@@ -1,5 +1,3 @@
-from http.client import REQUESTED_RANGE_NOT_SATISFIABLE
-from unicodedata import category
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -309,7 +307,7 @@ def edituser():
         }), HTTP_201_CREATED
         
     except Exception as e:
-        return jsonify({"msg":"you can't change parent user"}), HTTP_404_NOT_FOUND
+        return jsonify({"msg":"you can't change parent"}), HTTP_404_NOT_FOUND
 
 
 # edit user detail from patient side 
