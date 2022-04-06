@@ -80,9 +80,20 @@ def blogs():
         
     elif request.method=='PUT':
         id = request.args.get('id')
+        title=request.json["title"]
+        imglink=request.json["im_link"]
+        category = request.json["category"]
+        description = request.json["description"]
+        drname = request.json["dr_name"]
         type = request.json['type']
         user = Posts.query.filter_by(id=id).first()
         user.type=type
+        user.title=title
+        user.img_link=imglink
+        user.cateory=category
+        user.description=description
+        user.dr_name=drname
+
         db.session.commit()
         return jsonify({
             "msg":"Blog post seuccesfully"
