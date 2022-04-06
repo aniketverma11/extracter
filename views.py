@@ -309,7 +309,7 @@ def edituser():
         }), HTTP_201_CREATED
         
     except Exception as e:
-        return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
+        return jsonify({"msg":"you can't change parent user"}), HTTP_404_NOT_FOUND
 
 
 # edit user detail from patient side 
