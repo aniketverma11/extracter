@@ -77,27 +77,40 @@ def blogs():
 
                 }
             }), HTTP_201_CREATED
-        
+    #for update the type from draft to post or viceversa   
     elif request.method=='PUT':
-        id = request.args.get('id')
-        title=request.json["title"]
-        imglink=request.json["im_link"]
-        category = request.json["category"]
-        description = request.json["description"]
-        drname = request.json["dr_name"]
-        type = request.json['type']
-        user = Posts.query.filter_by(id=id).first()
-        user.type=type
-        user.title=title
-        user.img_link=imglink
-        user.cateory=category
-        user.description=description
-        user.dr_name=drname
+        try:
+            id = request.args.get('id')
+            post = Posts.query.filter_by(id=id).first()
+            if post:
+                time = request.json["reading_time"]
+                title=request.json["title"]
+                img_link=request.json["im_link"]
+                category = request.json["category"]
+                description = request.json["description"]
+                drname = request.json["dr_name"]
+                type = request.json['type']
+                post.title=title
+                post.reading_time=time
+                post.img_link=img_link
+                post.cateory=category
+                post.description=description
+                post.dr_name=drname
+                post.type=type
+                db.session.commit()
+                return jsonify({
+                    "title":post.title,
+                    "img_link":post.img_link,
+                    "category":post.cateory,
+                    "description":post.description,
+                    "update_at":post.updated_at,
+                    "id":post.id,
+                    "type":post.type
+                })
+        
+        except Exception as e:
+            return jsonify({"msg":"id not found"})
 
-        db.session.commit()
-        return jsonify({
-            "msg":"Blog post seuccesfully"
-        })
 
 
     choice = ["Cardiology","Neurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"]
