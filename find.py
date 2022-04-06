@@ -46,7 +46,6 @@ def doctors_user():
                 'name':i.username,
                 'mobile':i.mobile,
                 'email':i.email,
-                'role':i.role,
                 'created':i.created_at
             })
         return jsonify({'data':list})

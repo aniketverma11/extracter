@@ -49,7 +49,7 @@ def users():
         return jsonify({"data":list}),HTTP_200_OK
     return jsonify({'msg':'user does not exist'})
 
-@views.route("/user_blog_create", methods=['POST', 'GET'])
+@views.route("/user_blog_create", methods=['POST','GET','PUT'])
 def blogs():
     if request.method == 'POST':
         time = request.json["reading_time"]
@@ -58,8 +58,9 @@ def blogs():
         category = request.json["category"]
         description = request.json["description"]
         drname = request.json["dr_name"]
-        mobile = request.json["id"]
-        blog = Posts(user_id = mobile, reading_time=time,title=title, cateory=category, description=description, dr_name=drname, img_link=img_link)
+        id = request.json["id"]
+        type = request.json["type"] # type would be post or draft
+        blog = Posts(user_id = id, reading_time=time,title=title, cateory=category, description=description, dr_name=drname, img_link=img_link,type=type)
         db.session.add(blog)
         db.session.commit()
         user = Posts.query.filter_by(description=description,title=title).first()
@@ -70,23 +71,32 @@ def blogs():
                     "title":user.title,
                     'dr_name': user.dr_name,
                     "time":user.reading_time,
+                    "type":user.type,
                     "description":user.description,
                     "creater_at":user.created_at
 
                 }
             }), HTTP_201_CREATED
+        
+    elif request.method=='PUT':
+        id = request.args.get('id')
+        type = request.json['type']
+        user = Posts.query.filter_by(id=id).first()
+        user.type=type
+        db.session.commit()
+        return jsonify({
+            "msg":"Blog post seuccesfully"
+        })
+
 
     choice = ["Cardiology","Neurology", "Gynaecology", "Endocrinology", "General", "Medicine", "Ayurveda"]
     return jsonify({"catagories":choice})
 
-
-
-
-@views.get("/all_posts")
-def all_post():
+@views.get("/drafts")
+def drafts():
     id = request.args.get("id")
     list = []
-    posts = Posts.query.filter_by(user_id=id)
+    posts = Posts.query.filter_by(user_id=id,type='draft')
     for i in posts:
         list.append({
             "catagory":i.cateory,
@@ -96,7 +106,29 @@ def all_post():
             "description":i.description,
             "img":i.img_link,
             'created_at': i.created_at,
-            'upated_at': i.updated_at
+            'upated_at': i.updated_at,
+            "type":i.type
+        })
+    return jsonify({'data':list}),HTTP_200_OK
+
+
+
+@views.get("/all_posts")
+def all_post():
+    id = request.args.get("id")
+    list = []
+    posts = Posts.query.filter_by(user_id=id,type='post')
+    for i in posts:
+        list.append({
+            "catagory":i.cateory,
+            "id":i.id,
+            "drname":i.dr_name,
+            "title":i.title,
+            "description":i.description,
+            "img":i.img_link,
+            'created_at': i.created_at,
+            'upated_at': i.updated_at,
+            "type":i.type
         })
     return jsonify({'data':list}),HTTP_200_OK
 
