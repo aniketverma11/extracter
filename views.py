@@ -470,6 +470,23 @@ def pdf():
 
         return jsonify({"list":list})
 
+    elif request.method=='PUT':
+        id = request.args.get('id')
+        newname = request.json['name']
+        findpdf = Extracter.query.filter_by(id=id).first()
+        findpdf.pdfname = newname
+        db.session.commit()
+        return jsonify({"msg":"Renamed succesfully"})
+
+    elif request.method=='DELETE':
+        id = request.args.get('id')
+        pdf = Extracter.query.filter_by(id=id).first()
+        db.session.delete(pdf)
+        db.session.commit()
+        return jsonify({"msg":"Delete succesfully"})
+
+
+
 @views.put('/update_blog')
 def editblog():
     try:
