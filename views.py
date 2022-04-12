@@ -1,3 +1,4 @@
+from ast import Pass
 from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
@@ -278,7 +279,7 @@ def doctoer():
 
 # for the collection of pdf files 
 
-@views.route('/collection', methods=['POST', 'GET'])
+@views.route('/collection', methods=['POST', 'GET','PUT','DELETE'])
 def collection():
     if request.method=='POST':
         try:
@@ -309,10 +310,44 @@ def collection():
             
             return jsonify({"collection":user.coll_name,"id":user.id,"created":user.created_at,"list":list}), HTTP_200_OK
 
-            
-
         except Exception as e:
             return jsonify({"msg":"something went wrong","error":e}), HTTP_500_INTERNAL_SERVER_ERROR
+    
+    #collection delete
+    elif request.method=="DELETE":
+        id = request.args.get("id")
+        found_id = Collection.query.filter_by(id=id).first()
+        found_pdf = Extracter.query.filter_by(col_name=found_id.coll_name)
+        for pdf in found_pdf:
+            db.session.delete(pdf)
+            db.session.commit()
+        if found_id:
+            db.session.delete(found_id)
+            db.session.commit()
+            return jsonify({
+                "msg":"successfully delete"
+            })
+        return jsonify({
+                "msg":"user does not exist"
+            })
+    #collection rename
+    elif request.method=="PUT":
+        try:
+            id = request.args.get("id")
+            newcollectionname= request.json['name']
+            collection = Collection.query.filter_by(id = id).first()
+            col = collection.coll_name
+            colnamepdf = Extracter.query.filter_by(col_name=col)
+            for coll in colnamepdf:
+                coll.col_name=newcollectionname
+                db.session.commit()
+            collection.coll_name = newcollectionname
+            db.session.commit()
+            return jsonify({"msg":"Update Succesfully"})
+        except Exception as e:
+            return jsonify({"msg":"internal server error"},e)
+
+    #collection get on particular id
     try:
         id = request.args.get('id', type=int)
         list = []
