@@ -1,4 +1,5 @@
-from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
+import email
+from constants.http_statscode import HTTP_200_OK, HTTP_201_CREATED, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from flask import Blueprint, request
 from flask.json import jsonify
 import validators
@@ -7,6 +8,27 @@ from database import *
 
 views = Blueprint("views", __name__, url_prefix="/api/v1/views")
 
+
+#create doctors manually
+@views.post('/doc')
+def doc():
+    name=request.json['name']
+    speciality =request.json['speciality']
+    mobile = request.json['mobile']
+    email = request.json['email']
+    doc = User(username=name, mobile=mobile, speciality=speciality, email=email, role="doctor")
+    db.session.add(doc)
+    db.session.commit()
+    doc2 = User.query.filter_by(mobile=mobile).first()
+    return jsonify({
+        'id':doc2.id,
+        'name':doc2.username,
+        'mobile':doc2.mobile,
+        'email':doc2.email
+    })
+  
+
+#create doctor user
 @views.post('/user_create')
 def user_create():
     if request.method == 'POST':
@@ -265,6 +287,20 @@ def all_blogs():
 
 @views.get('/contact')
 def doctoer():
+    choice = request.args.get('category', type=str)
+    list = []
+    if choice:
+        doctors = User.query.filter_by(speciality=choice)
+        for i in blogs:
+                list.append({
+                    "id":i.id,
+                    "name":i.user,
+                    "mobile":i.mobile,
+                    "email":i.email,
+                    "speciality":i.speciality
+                                      
+                })
+        return jsonify({'data':list}),HTTP_200_OK
     doctors = User.query.all()
     list =[]
     for doctor in doctors:
@@ -468,7 +504,7 @@ def pdf():
                 "path":pdf.path
             })
 
-        return jsonify({"list":list})
+        return jsonify({"list":list}),HTTP_202_ACCEPTED
 
     elif request.method=='PUT':
         id = request.args.get('id')
@@ -483,7 +519,7 @@ def pdf():
         pdf = Extracter.query.filter_by(id=id).first()
         db.session.delete(pdf)
         db.session.commit()
-        return jsonify({"msg":"Delete succesfully"})
+        return jsonify({"msg":"Delete succesfully"}),HTTP_200_OK
 
 
 
@@ -513,3 +549,112 @@ def editblog():
         
     except Exception as e:
         return jsonify({"msg":"id not found"}), HTTP_404_NOT_FOUND
+
+#create quesnairy for patient
+@views.route('/questions', methods=['GET','POST','PUT', 'DELETE'])
+def questions():
+    if request.method=='POST':
+        userid = request.json['id']
+        age = request.json['age']
+        gender = request.json['gender']
+        diet = request.json['diet']
+        smoking = request.json['smoking']
+        alcohol = request.json['alcohol']
+        medication = request.json['regular_medication']
+        dieases = request.json['dieases']
+        complaints = request.json['complaints']
+
+        questions = Questions(
+            user_id=userid,
+            age=age,
+            gender=gender,
+            diet=diet,
+            smoking=smoking,
+            alcohol=alcohol,
+            medication=medication,
+            dieases=str(dieases),
+            complaints=str(complaints)
+        )
+        db.session.add(questions)
+        db.session.commit()
+        
+        questions = Questions.query.filter_by(user_id=id).first()
+        return jsonify({
+            "id":questions.id,
+            "age":questions.age,
+            "gender":questions.gender,
+            "diet":questions.diet,
+            "smoking":questions.smoking,
+            "alcohol":questions.alcohol,
+            "regular_medication":questions.medication,
+            "dieases":questions.dieases,
+            "complaints":questions.complaints
+        }),HTTP_201_CREATED
+
+    elif request.method=='GET':
+        id = request.args.get("id")
+        questions = Questions.query.filter_by(id=id).first()
+        return jsonify({
+            "id":questions.id,
+            "age":questions.age,
+            "gender":questions.gender,
+            "diet":questions.diet,
+            "smoking":questions.smoking,
+            "alcohol":questions.alcohol,
+            "regular_medication":questions.medication,
+            "dieases":questions.dieases,
+            "complaints":questions.complaints
+        }),HTTP_202_ACCEPTED
+
+    elif request.method =='PUT':
+        userid = request.args.get("id")
+        questions = Questions.query.filter_by(id=userid).first()
+        if questions:
+            questions.age = request.json['age']
+            questions.gender = request.json['gender']
+            questions.diet = request.json['diet']
+            questions.smoking = request.json['smoking']
+            questions.alcohol = request.json['alcohol']
+            questions.medication = request.json['regular_medication']
+            questions.dieases = request.json['dieases']
+            questions.complaints = request.json['complaints']
+            db.session.commit()
+            return jsonify({
+                "msg":"updated succesfully"
+            })
+        else:
+            return jsonify({
+                "msg":"error"
+            })
+
+#Portal sharing
+@views.route('/portal', methods=['PUT', 'GET', 'POST', 'DELETE'])
+def portal():
+    if request.method=='POST':
+        patient_id=request.json['patient_id']
+        doctor_id=request.json['doctor_id']
+        patient_name=request.json['patient_name']
+        pdfname=request.json['pdfname']
+        url=request.json['url']
+        portal = Portal(pat_id=patient_id,doc_id=doctor_id,patientname=patient_name,pdfname=pdfname,url=url)
+        db.session.add(portal)
+        db.session.commit()
+        return jsonify({
+            "msg":"share succesfully"
+        })
+
+    elif request.method=='GET':
+        doc_id= request.args.get("id")
+        portal = Portal.query.filter_by(doc_id=doc_id)
+        list = []
+        for pdf in portal:
+            list.append({
+                "patient_id":pdf.pat_id,
+                "patientname":pdf.patientname,
+                "pdfname":pdf.pdfname,
+                "url":pdf.url
+            })
+
+        return jsonify({
+            "list":list
+        })

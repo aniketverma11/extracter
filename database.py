@@ -1,3 +1,4 @@
+from tokenize import Special
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import app
@@ -13,11 +14,13 @@ class User(db.Model):
     username = db.Column(db.String(80),nullable=False)
     mobile = db.Column(db.Integer, nullable=True)
     role = db.Column(db.String(80),nullable=False)
+    speciality = db.Column(db.String(80), nullable=True)
     email = db.Column(db.String(120), nullable=True)
     password = db.Column(db.Text(), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     doccument = db.relationship('Users', backref="user")
+    doccument2 = db.relationship('Portal', backref="user")
 
     def __repr__(self) -> str:
         return 'User>>> {self.username}', 'User_id>>> {self.id}'
@@ -78,6 +81,8 @@ class Patientsusers(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     doccument = db.relationship('Collection', backref="Patientsusers")
     doccument1 = db.relationship('Extracter', backref="Patientsusers")
+    doccument2 = db.relationship('Questions', backref="Patientsusers")
+    doccument3 = db.relationship('Portal', backref="user")
     def __repr__(self) -> str:
         return f'User>>> {self.id}, {self.username}'
 
@@ -108,3 +113,25 @@ class Extracter(db.Model):
     def __repr__(self) -> str:
         return f'doccument>>> {self.id}, {self.url}'
 
+class Questions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
+    age = db.Column(db.String(80), nullable=True)
+    gender = db.Column(db.String(80), nullable=True)
+    diet = db.Column(db.String(80), nullable=True)
+    smoking = db.Column(db.String(80), nullable=True)
+    alcohol = db.Column(db.String(80), nullable=True)
+    medication = db.Column(db.String(80), nullable=True)
+    dieases = db.Column(db.String(80), nullable=True)
+    complaints = db.Column(db.String(80), nullable=True)
+
+
+class Portal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    pat_id=db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
+    doc_id=db.Column(db.Integer, db.ForeignKey('user.id'))
+    patientname=db.Column(db.String(80), nullable=True)
+    pdfname=db.Column(db.String(80), nullable=True)
+    url = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
