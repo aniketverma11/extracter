@@ -1,4 +1,3 @@
-from tokenize import Special
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import app
