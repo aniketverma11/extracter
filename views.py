@@ -409,7 +409,8 @@ def collection():
 # get a particular collection
 @views.get('/coll')
 def coll():
-    id = request.args.get('id', type=int)
+    try:
+        id = request.args.get('id', type=int)
         list = []
         user = Collection.query.filter_by(id=id)
         for i in user:
@@ -428,6 +429,8 @@ def coll():
             
        
         return jsonify({"list":list})
+    except Exception:
+        return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST
 
 
 # edit user detail from patient side 
