@@ -603,17 +603,7 @@ def questions():
         db.session.commit()
         
         questions = Questions.query.filter_by(user_id=userid).first()
-        return jsonify({
-            "id":questions.id,
-            "age":questions.age,
-            "gender":questions.gender,
-            "diet":questions.diet,
-            "smoking":questions.smoking,
-            "alcohol":questions.alcohol,
-            "regular_medication":questions.medication,
-            "dieases":questions.dieases,
-            "complaints":questions.complaints
-        }),HTTP_201_CREATED
+        return jsonify({"msg":"saved successfully"}),HTTP_201_CREATED
 
     elif request.method=='GET':
         id = request.args.get("id")
