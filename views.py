@@ -23,7 +23,8 @@ def doc():
         'id':doc2.id,
         'name':doc2.username,
         'mobile':doc2.mobile,
-        'email':doc2.email
+        'email':doc2.email,
+        'speciality':doc2.speciality
     })
   
 
@@ -290,7 +291,7 @@ def doctoer():
     list = []
     if choice:
         doctors = User.query.filter_by(speciality=choice)
-        for i in blogs:
+        for i in doctors:
                 list.append({
                     "id":i.id,
                     "name":i.user,
