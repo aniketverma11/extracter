@@ -577,7 +577,7 @@ def questions():
         db.session.add(questions)
         db.session.commit()
         
-        questions = Questions.query.filter_by(user_id=id).first()
+        questions = Questions.query.filter_by(user_id=userid).first()
         return jsonify({
             "id":questions.id,
             "age":questions.age,
@@ -630,12 +630,12 @@ def questions():
 @views.route('/portal', methods=['PUT', 'GET', 'POST', 'DELETE'])
 def portal():
     if request.method=='POST':
-        patient_id=request.json['patient_id']
+        #patient_id=request.json['patient_id']
         doctor_id=request.json['doctor_id']
         patient_name=request.json['patient_name']
         pdfname=request.json['pdfname']
         url=request.json['url']
-        portal = Portal(pat_id=patient_id,doc_id=doctor_id,patientname=patient_name,pdfname=pdfname,url=url)
+        portal = Portal(doc_id=doctor_id,patientname=patient_name,pdfname=pdfname,url=url)
         db.session.add(portal)
         db.session.commit()
         return jsonify({

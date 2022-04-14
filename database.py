@@ -81,7 +81,7 @@ class Patientsusers(db.Model):
     doccument = db.relationship('Collection', backref="Patientsusers")
     doccument1 = db.relationship('Extracter', backref="Patientsusers")
     doccument2 = db.relationship('Questions', backref="Patientsusers")
-    doccument3 = db.relationship('Portal', backref="user")
+    #doccument3 = db.relationship('Portal', backref="user")
     def __repr__(self) -> str:
         return f'User>>> {self.id}, {self.username}'
 
@@ -127,7 +127,7 @@ class Questions(db.Model):
 
 class Portal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    pat_id=db.Column(db.Integer, db.ForeignKey('patientsusers.id'))
+    pat_id=db.Column(db.Integer, db.ForeignKey('patientsusers.id'),nullable=True)
     doc_id=db.Column(db.Integer, db.ForeignKey('user.id'))
     patientname=db.Column(db.String(80), nullable=True)
     pdfname=db.Column(db.String(80), nullable=True)
