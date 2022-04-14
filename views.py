@@ -406,6 +406,29 @@ def collection():
         return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST
 
 
+# get a particular collection
+@views.get('/coll')
+def coll():
+    id = request.args.get('id', type=int)
+        list = []
+        user = Collection.query.filter_by(id=id)
+        for i in user:
+            col = i.coll_name
+            l = []
+            user2 = Extracter.query.filter_by(col_name=col,user_id=id)
+            for j in user2:
+                l.append({
+                    "url":j.url,
+                    "name":j.pdfname,
+                    "path":j.path,
+                    "pdf_id":j.id,
+                    "created":j.created_at
+                })
+            list.append({"collection":i.coll_name,"id":i.id,"created":i.created_at,"list":l})    
+            
+       
+        return jsonify({"list":list})
+
 
 # edit user detail from patient side 
 
