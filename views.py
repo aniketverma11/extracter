@@ -411,26 +411,24 @@ def collection():
 def coll():
     try:
         id = request.args.get('id', type=int)
+        user_id = request.args.get('userid', type=int)
+        collection = Collection.query.filter_by(id=id).first()
+        coll = collection.coll_name
+        pdf = Extracter.query.filter_by(col_name=coll, user_id=user_id)
         list = []
-        user = Collection.query.filter_by(id=id)
-        for i in user:
-            col = i.coll_name
-            l = []
-            user2 = Extracter.query.filter_by(col_name=col,user_id=id)
-            for j in user2:
-                l.append({
-                    "url":j.url,
-                    "name":j.pdfname,
-                    "path":j.path,
-                    "pdf_id":j.id,
-                    "created":j.created_at
-                })
-            list.append({"collection":i.coll_name,"id":i.id,"created":i.created_at,"list":l})    
+        for j in pdf:
+            list.append({
+                "url":j.url,
+                "name":j.pdfname,
+                "path":j.path,
+                "pdf_id":j.id,
+                "created":j.created_at
+            })    
             
        
-        return jsonify({"list":list})
-    except Exception:
-        return jsonify({"msg":"ID does not exist"}), HTTP_400_BAD_REQUEST
+        return jsonify({"collection":collection.coll_name, "id":collection.id,"list":list})
+    except Exception as e:
+        return jsonify({"msg":"collection not found"},e), HTTP_400_BAD_REQUEST
 
 
 # edit user detail from patient side 
