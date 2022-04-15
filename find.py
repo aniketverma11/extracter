@@ -5,6 +5,7 @@ import validators
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from database import *
 
+
 dele = Blueprint("del", __name__, url_prefix="/api/v1/del")
 
 

@@ -8,7 +8,7 @@ from database import *
 views = Blueprint("views", __name__, url_prefix="/api/v1/views")
 
 
-#create doctors manually
+#create doctors manuall
 @views.post('/doc')
 def doc():
     name=request.json['name']
