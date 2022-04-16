@@ -300,11 +300,12 @@ def doctoer():
                     "speciality":i.speciality
                                       
                 })
-        return jsonify({'data':list}),HTTP_200_OK
+        return jsonify({'contact':list}),HTTP_200_OK
     doctors = User.query.all()
     list =[]
     for doctor in doctors:
         list.append({
+            "id":doctor.id,
             "name":doctor.username,
             "mobile":doctor.mobile,
             "email":doctor.email
