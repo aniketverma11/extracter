@@ -297,10 +297,10 @@ def doctoer():
                     "name":i.user,
                     "mobile":i.mobile,
                     "email":i.email,
-                    "speciality":i.speciality
-                                      
+                    "speciality":i.speciality                     
                 })
-        return jsonify({'contact':list}),HTTP_200_OK
+        return jsonify({'contacts':list}),HTTP_200_OK
+    
     doctors = User.query.all()
     list =[]
     for doctor in doctors:
