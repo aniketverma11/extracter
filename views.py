@@ -673,3 +673,60 @@ def portal():
         return jsonify({
             "list":list
         })
+
+@views.route('/analysisImg', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+def analysis():
+    if request.method == "POST":
+        try:
+            patientId = request.json['id']
+            pdfName = request.json['pdfName']
+            pdfImages = request.json['imgs']
+
+            for img in pdfImages:
+                imgLink = img['img']
+                analysis= Analysis(patientId=patientId,pdfName=pdfName,analysisImgs=imgLink)
+                db.session.add(analysis)
+                db.session.commit()
+
+            imgs = Analysis.query.filter_by(patientId=patientId)
+            list = []
+            for img in imgs:
+                list.append({
+                    "imgID":img.id,
+                    "imgLink":img.analysisImgs,
+                    "created":img.created_at,
+                    "updated":img.updated_at,
+                })
+
+            return jsonify({"patientID":patientId, "pdfName":pdfName,"list":list})
+
+        except Exception as e:
+            return jsonify({"msg":"Internal error","error":e})
+
+    elif request.method == 'GET':
+        id = request.args.get('id', type=int)
+        pdfName = request.args.get('pdfName', type=str)
+
+        findImgs = Analysis.query.filter_by(patientId=id, pdfName=pdfName)
+        list = []
+        for img in findImgs:
+            list.append({
+                'imgId':img.id,
+                'img':img.analysisImgs,
+            })
+
+        return jsonify({
+                'list':list
+            })
+
+    elif request.method=='DELETE':
+        #get patient id delete every image which belogs to that id
+        id = request.args.get('id')
+
+
+        find = Analysis.query.filter_by(patientId=id)
+        for f in find:
+            db.session.delete(f)
+            db.session.commit()
+
+        return jsonify({'msg':"Delete Succesfully"})

@@ -80,7 +80,7 @@ class Patientsusers(db.Model):
     doccument = db.relationship('Collection', backref="Patientsusers")
     doccument1 = db.relationship('Extracter', backref="Patientsusers")
     doccument2 = db.relationship('Questions', backref="Patientsusers")
-    #doccument3 = db.relationship('Portal', backref="user")
+    #doccument3 = db.relationship('Analysis', backref="Patientsusers")
     def __repr__(self) -> str:
         return f'User>>> {self.id}, {self.username}'
 
@@ -131,5 +131,14 @@ class Portal(db.Model):
     patientname=db.Column(db.String(80), nullable=True)
     pdfname=db.Column(db.String(80), nullable=True)
     url = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+
+
+class Analysis(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patientId=db.Column(db.Integer, db.ForeignKey('patientsusers.id'),nullable=True)
+    pdfName=db.Column(db.String(80), nullable=True)
+    analysisImgs = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
